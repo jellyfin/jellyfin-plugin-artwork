@@ -153,14 +153,14 @@ namespace Jellyfin.Plugin.Artwork
              * 1: image type
              * 2: image extension
              */
-            var imageTemplate = repo.Url.TrimEnd('/') + $"/{itemKey}/{0}/{1}.{2}";
+            var imageUrlTemplate = repo.Url.TrimEnd('/') + $"/{itemKey}/{{0}}/{{1}}.{{2}}";
 
             foreach (var image in artworkDto.ArtworkImages.Backdrop)
             {
                 imageInfos.Add(new RemoteImageInfo
                 {
                     Type = ImageType.Backdrop,
-                    Url = string.Format(CultureInfo.InvariantCulture, imageTemplate, artworkDto.MachineName, "backdrop", image)
+                    Url = string.Format(CultureInfo.InvariantCulture, imageUrlTemplate, artworkDto.MachineName, "backdrop", image)
                 });
             }
 
@@ -169,7 +169,7 @@ namespace Jellyfin.Plugin.Artwork
                 imageInfos.Add(new RemoteImageInfo
                 {
                     Type = ImageType.Primary,
-                    Url = string.Format(CultureInfo.InvariantCulture, imageTemplate, artworkDto.MachineName, "primary", image)
+                    Url = string.Format(CultureInfo.InvariantCulture, imageUrlTemplate, artworkDto.MachineName, "primary", image)
                 });
             }
 
@@ -178,7 +178,7 @@ namespace Jellyfin.Plugin.Artwork
                 imageInfos.Add(new RemoteImageInfo
                 {
                     Type = ImageType.Thumb,
-                    Url = string.Format(CultureInfo.InvariantCulture, imageTemplate, artworkDto.MachineName, "thumb", image)
+                    Url = string.Format(CultureInfo.InvariantCulture, imageUrlTemplate, artworkDto.MachineName, "thumb", image)
                 });
             }
 
@@ -187,7 +187,7 @@ namespace Jellyfin.Plugin.Artwork
                 imageInfos.Add(new RemoteImageInfo
                 {
                     Type = ImageType.Logo,
-                    Url = string.Format(CultureInfo.InvariantCulture, imageTemplate, artworkDto.MachineName, "logo", image)
+                    Url = string.Format(CultureInfo.InvariantCulture, imageUrlTemplate, artworkDto.MachineName, "logo", image)
                 });
             }
         }
