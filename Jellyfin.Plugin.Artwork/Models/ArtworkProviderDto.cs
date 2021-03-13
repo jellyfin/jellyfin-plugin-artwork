@@ -1,9 +1,9 @@
 ﻿namespace Jellyfin.Plugin.Artwork.Models
 {
     /// <summary>
-    /// The providers.
+    /// The artwork provider dto.
     /// </summary>
-    public class Providers
+    public class ArtworkProviderDto
     {
         /// <summary>
         /// Gets or sets the anilist identifier.

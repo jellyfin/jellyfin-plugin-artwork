@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -41,32 +42,21 @@ namespace Jellyfin.Plugin.Artwork
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<RemoteImageInfo>> GetImageInfos(Type itemType, IHasProviderIds providerIds)
+        public async Task<IEnumerable<RemoteImageInfo>> GetImageInfos(string imageTypeKey, Type itemType, IHasProviderIds providerIds)
         {
             var artworkRepo = ArtworkPlugin.Instance!.Configuration.ArtworkRepos;
             var remoteImageInfos = new List<RemoteImageInfo>();
 
-            var itemTypeString = itemType.ToString();
             foreach (var repo in artworkRepo)
             {
-                var arrayIndex = Array.FindIndex(repo.ItemType, t => string.Equals(t, itemTypeString, StringComparison.OrdinalIgnoreCase));
-                if (arrayIndex == -1)
-                {
-                    // Repo not configured for item type.
-                    continue;
-                }
-
-                if (string.IsNullOrEmpty(repo.Url))
-                {
-                    continue;
-                }
-
-                var artworkDtos = await GetFromRepo(repo.Url);
+                var fullUrl = repo.Url.TrimEnd('/') + $"/{imageTypeKey}.json";
+                var artworkDtos = await GetFromRepo(fullUrl).ConfigureAwait(false);
                 var artworkDto = GetMatch(itemType, providerIds, artworkDtos);
-                if (artworkDto?.ArtworkImages != null)
-                {
-                    AddImageInfos(ref remoteImageInfos, artworkDto.ArtworkImages);
-                }
+                AddImageInfos(
+                    repo,
+                    imageTypeKey,
+                    ref remoteImageInfos,
+                    artworkDto);
             }
 
             return remoteImageInfos;
@@ -83,79 +73,61 @@ namespace Jellyfin.Plugin.Artwork
                     continue;
                 }
 
-                if (string.Equals(
-                    providerIds.ProviderIds["AniList"],
-                    artworkDto.Providers.Anilist,
-                    StringComparison.OrdinalIgnoreCase))
+                if (providerIds.TryGetProviderId("AniList", out var providerId)
+                    && string.Equals(providerId, artworkDto.Providers.Anilist, StringComparison.OrdinalIgnoreCase))
                 {
                     return artworkDto;
                 }
 
-                if (string.Equals(
-                    providerIds.ProviderIds[MetadataProvider.Imdb.ToString()],
-                    artworkDto.Providers.Imdb,
-                    StringComparison.OrdinalIgnoreCase))
+                if (providerIds.TryGetProviderId(MetadataProvider.Imdb, out providerId)
+                    && string.Equals(providerId, artworkDto.Providers.Imdb, StringComparison.OrdinalIgnoreCase))
                 {
                     return artworkDto;
                 }
 
-                if (string.Equals(
-                    providerIds.ProviderIds[MetadataProvider.Tmdb.ToString()],
-                    artworkDto.Providers.Tmdb,
-                    StringComparison.OrdinalIgnoreCase))
+                if (providerIds.TryGetProviderId(MetadataProvider.Tmdb, out providerId)
+                    && string.Equals(providerId, artworkDto.Providers.Tmdb, StringComparison.OrdinalIgnoreCase))
                 {
                     return artworkDto;
                 }
 
-                if (string.Equals(
-                    providerIds.ProviderIds[MetadataProvider.Tvdb.ToString()],
-                    artworkDto.Providers.Tvdb,
-                    StringComparison.OrdinalIgnoreCase))
+                if (providerIds.TryGetProviderId(MetadataProvider.Tvdb, out providerId)
+                    && string.Equals(providerId, artworkDto.Providers.Tvdb, StringComparison.OrdinalIgnoreCase))
                 {
                     return artworkDto;
                 }
 
                 if ((itemType == typeof(Audio) || itemType == typeof(MusicAlbum))
-                    && string.Equals(
-                        providerIds.ProviderIds[MetadataProvider.MusicBrainzReleaseGroup.ToString()],
-                        artworkDto.Providers.Musicbrainz,
-                        StringComparison.OrdinalIgnoreCase))
+                    && providerIds.TryGetProviderId(MetadataProvider.MusicBrainzReleaseGroup, out providerId)
+                    && string.Equals(providerId, artworkDto.Providers.Musicbrainz, StringComparison.OrdinalIgnoreCase))
                 {
                     return artworkDto;
                 }
 
                 if (itemType == typeof(Audio)
-                    && string.Equals(
-                        providerIds.ProviderIds[MetadataProvider.MusicBrainzAlbumArtist.ToString()],
-                        artworkDto.Providers.Musicbrainz,
-                        StringComparison.OrdinalIgnoreCase))
+                    && providerIds.TryGetProviderId(MetadataProvider.MusicBrainzAlbumArtist, out providerId)
+                    && string.Equals(providerId, artworkDto.Providers.Musicbrainz, StringComparison.OrdinalIgnoreCase))
                 {
                     return artworkDto;
                 }
 
                 if ((itemType == typeof(MusicAlbum) || itemType == typeof(Audio))
-                    && string.Equals(
-                        providerIds.ProviderIds[MetadataProvider.MusicBrainzAlbum.ToString()],
-                        artworkDto.Providers.Musicbrainz,
-                        StringComparison.OrdinalIgnoreCase))
+                    && providerIds.TryGetProviderId(MetadataProvider.MusicBrainzAlbum, out providerId)
+                    && string.Equals(providerId, artworkDto.Providers.Musicbrainz, StringComparison.OrdinalIgnoreCase))
                 {
                     return artworkDto;
                 }
 
                 if (itemType == typeof(MusicArtist)
-                    && string.Equals(
-                        providerIds.ProviderIds[MetadataProvider.MusicBrainzArtist.ToString()],
-                        artworkDto.Providers.Musicbrainz,
-                        StringComparison.OrdinalIgnoreCase))
+                    && providerIds.TryGetProviderId(MetadataProvider.MusicBrainzArtist, out providerId)
+                    && string.Equals(providerId, artworkDto.Providers.Musicbrainz, StringComparison.OrdinalIgnoreCase))
                 {
                     return artworkDto;
                 }
 
                 if (itemType == typeof(Audio)
-                    && string.Equals(
-                        providerIds.ProviderIds[MetadataProvider.MusicBrainzTrack.ToString()],
-                        artworkDto.Providers.Musicbrainz,
-                        StringComparison.OrdinalIgnoreCase))
+                    && providerIds.TryGetProviderId(MetadataProvider.MusicBrainzTrack, out providerId)
+                    && string.Equals(providerId, artworkDto.Providers.Musicbrainz, StringComparison.OrdinalIgnoreCase))
                 {
                     return artworkDto;
                 }
@@ -164,41 +136,58 @@ namespace Jellyfin.Plugin.Artwork
             return null;
         }
 
-        private static void AddImageInfos(ref List<RemoteImageInfo> imageInfos, ArtworkImages artworkImages)
+        private static void AddImageInfos(
+            ArtworkRepo repo,
+            string itemKey,
+            ref List<RemoteImageInfo> imageInfos,
+            ArtworkDto? artworkDto)
         {
-            if (!string.IsNullOrEmpty(artworkImages.Backdrop))
+            if (artworkDto?.ArtworkImages == null)
+            {
+                // Repo or images not found.
+                return;
+            }
+
+            /*
+             * 0: machine name
+             * 1: image type
+             * 2: image extension
+             */
+            var imageTemplate = repo.Url.TrimEnd('/') + $"/{itemKey}/{0}/{1}.{2}";
+
+            foreach (var image in artworkDto.ArtworkImages.Backdrop)
             {
                 imageInfos.Add(new RemoteImageInfo
                 {
                     Type = ImageType.Backdrop,
-                    Url = artworkImages.Backdrop
+                    Url = string.Format(CultureInfo.InvariantCulture, imageTemplate, artworkDto.MachineName, "backdrop", image)
                 });
             }
 
-            if (!string.IsNullOrEmpty(artworkImages.Primary))
+            foreach (var image in artworkDto.ArtworkImages.Primary)
             {
                 imageInfos.Add(new RemoteImageInfo
                 {
                     Type = ImageType.Primary,
-                    Url = artworkImages.Primary
+                    Url = string.Format(CultureInfo.InvariantCulture, imageTemplate, artworkDto.MachineName, "primary", image)
                 });
             }
 
-            if (!string.IsNullOrEmpty(artworkImages.Thumb))
+            foreach (var image in artworkDto.ArtworkImages.Thumb)
             {
                 imageInfos.Add(new RemoteImageInfo
                 {
                     Type = ImageType.Thumb,
-                    Url = artworkImages.Thumb
+                    Url = string.Format(CultureInfo.InvariantCulture, imageTemplate, artworkDto.MachineName, "thumb", image)
                 });
             }
 
-            if (!string.IsNullOrEmpty(artworkImages.Logo))
+            foreach (var image in artworkDto.ArtworkImages.Logo)
             {
                 imageInfos.Add(new RemoteImageInfo
                 {
                     Type = ImageType.Logo,
-                    Url = artworkImages.Logo
+                    Url = string.Format(CultureInfo.InvariantCulture, imageTemplate, artworkDto.MachineName, "logo", image)
                 });
             }
         }
@@ -214,7 +203,8 @@ namespace Jellyfin.Plugin.Artwork
             {
                 var artworkDto = await _httpClientFactory
                     .CreateClient(NamedClient.Default)
-                    .GetFromJsonAsync<IReadOnlyList<ArtworkDto>>(repositoryUrl);
+                    .GetFromJsonAsync<IReadOnlyList<ArtworkDto>>(repositoryUrl)
+                    .ConfigureAwait(false);
                 if (artworkDto != null)
                 {
                     _memoryCache.Set(repositoryUrl, artworkDto, _cacheExpire);

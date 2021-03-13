@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,16 +42,16 @@ namespace Jellyfin.Plugin.Artwork.Providers
 
         /// <inheritdoc />
         public IEnumerable<ImageType> GetSupportedImages(BaseItem item)
-            => ArtworkProviderHelper.GetSupportedImages();
+            => ArtworkProviderHelper.GetSupportedImages;
 
         /// <inheritdoc />
         public Task<IEnumerable<RemoteImageInfo>> GetImages(BaseItem item, CancellationToken cancellationToken)
-            => _repositoryCache.GetImageInfos(item.GetType(), item);
+            => _repositoryCache.GetImageInfos("studios", typeof(Studio), item);
 
         /// <inheritdoc />
         public Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
             => _httpClientFactory
                 .CreateClient(NamedClient.Default)
-                .GetAsync(url, cancellationToken);
+                .GetAsync(new Uri(url), cancellationToken);
     }
 }

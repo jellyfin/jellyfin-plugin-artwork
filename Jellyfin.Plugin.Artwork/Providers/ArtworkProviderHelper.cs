@@ -17,10 +17,9 @@ namespace Jellyfin.Plugin.Artwork.Providers
         };
 
         /// <summary>
-        /// Get supported image types.
+        /// Gets the supported image types.
         /// </summary>
         /// <returns>The supported image types.</returns>
-        public static IEnumerable<ImageType> GetSupportedImages()
-            => SupportedImages;
+        public static IEnumerable<ImageType> GetSupportedImages => SupportedImages;
     }
 }

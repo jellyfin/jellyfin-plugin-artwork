@@ -47,7 +47,13 @@ namespace Jellyfin.Plugin.Artwork
             yield return new PluginPageInfo
             {
                 Name = Name,
-                EmbeddedResourcePath = prefix + ".Configuration.config.html"
+                EmbeddedResourcePath = prefix + ".Configuration.Web.config.html",
+            };
+
+            yield return new PluginPageInfo
+            {
+                Name = $"{Name}.js",
+                EmbeddedResourcePath = prefix + ".Configuration.Web.config.js"
             };
         }
     }

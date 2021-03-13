@@ -14,9 +14,10 @@ namespace Jellyfin.Plugin.Artwork
         /// <summary>
         /// Get the remote image info for item.
         /// </summary>
+        /// <param name="imageTypeKey">The item repo key.</param>
         /// <param name="itemType">The item type.</param>
         /// <param name="providerIds">The provider ids.</param>
         /// <returns>The list of remote image info.</returns>
-        Task<IEnumerable<RemoteImageInfo>> GetImageInfos(Type itemType, IHasProviderIds providerIds);
+        Task<IEnumerable<RemoteImageInfo>> GetImageInfos(string imageTypeKey, Type itemType, IHasProviderIds providerIds);
     }
 }
