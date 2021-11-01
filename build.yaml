@@ -10,6 +10,6 @@ description: >
   Downloads artwork from a repository for various media types.
 category: "Metadata"
 artifacts:
-- "Jellyfin.Plugin.Artwork"
+- "Jellyfin.Plugin.Artwork.dll"
 changelog: >
   Initial release.
