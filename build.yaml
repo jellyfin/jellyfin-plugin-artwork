@@ -3,13 +3,13 @@ name: "Artwork"
 guid: "7871D3B1-F1B9-4318-9C27-F35998FFBBCC"
 version: "1.0.0.0"
 targetAbi: "10.7.0.0"
-framework: "net5.0"
+framework: "net6.0"
 owner: "jellyfin"
 overview: "Download artwork"
 description: >
   Downloads artwork from a repository for various media types.
 category: "Metadata"
 artifacts:
-- "Jellyfin.Plugin.Artwork"
+- "Jellyfin.Plugin.Artwork.dll"
 changelog: >
   Initial release.
