@@ -1,5 +1,5 @@
 <h1 align="center">Jellyfin Artwork Plugin</h1>
-<h3 align="center">Part of the <a href="https://jellyfin.media">Jellyfin Project</a></h3>
+<h3 align="center">Part of the <a href="https://jellyfin.org">Jellyfin Project</a></h3>
 
 <p align="center">
 This plugin is built with .NET to download artwork.
