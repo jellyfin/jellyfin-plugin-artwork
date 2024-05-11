@@ -1,15 +1,15 @@
-﻿using MediaBrowser.Common.Plugins;
+﻿using MediaBrowser.Controller;
+using MediaBrowser.Controller.Plugins;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jellyfin.Plugin.Artwork
+namespace Jellyfin.Plugin.Artwork;
+
+/// <inheritdoc />
+public class PluginServiceRegistrator : IPluginServiceRegistrator
 {
     /// <inheritdoc />
-    public class PluginServiceRegistrator : IPluginServiceRegistrator
+    public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
     {
-        /// <inheritdoc />
-        public void RegisterServices(IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddSingleton<IRepositoryCache, RepositoryCache>();
-        }
+        serviceCollection.AddSingleton<IRepositoryCache, RepositoryCache>();
     }
 }

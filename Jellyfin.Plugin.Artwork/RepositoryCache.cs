@@ -194,7 +194,8 @@ namespace Jellyfin.Plugin.Artwork
 
         private async Task<IReadOnlyList<ArtworkDto>> GetFromRepo(string repositoryUrl)
         {
-            if (_memoryCache.TryGetValue(repositoryUrl, out IReadOnlyList<ArtworkDto> cachedArtwork))
+            if (_memoryCache.TryGetValue(repositoryUrl, out IReadOnlyList<ArtworkDto>? cachedArtwork)
+                && cachedArtwork is not null)
             {
                 return cachedArtwork;
             }
