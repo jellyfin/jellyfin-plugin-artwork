@@ -8,7 +8,21 @@ owner: "jellyfin"
 overview: "Download artwork"
 description: >
   Downloads artwork from a repository for various media types.
+
 category: "Metadata"
 artifacts:
-- "Jellyfin.Plugin.Artwork.dll"
-changelog: >
+  - "Jellyfin.Plugin.Artwork.dll"
+changelog: |-
+  - 10.9 (#21) @crobibero
+  - Use meta ci (#14) @crobibero
+  - chore(deps): bump Microsoft.Extensions.Http from 5.0.0 to 6.0.0 (#6) @dependabot
+  - update ruleset (#7) @crobibero
+  - 10.8 support (#4) @crobibero
+  - chore(deps): bump release-drafter/release-drafter from v5.14.0 to v5.15.0 (#2) @dependabot
+  - Fix url image template (#1) @crobibero
+
+  ### Code or Repo Maintenance ###
+  - Update link to Jellyfin website (#19) @methbkts
+
+  ### CI & build changes ###
+  - fix: meta ci workflows (#15) @h1dden-da3m0n
