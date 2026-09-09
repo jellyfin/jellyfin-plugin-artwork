@@ -38,7 +38,7 @@ namespace Jellyfin.Plugin.Artwork
         public override string Name => "Artwork";
 
         /// <inheritdoc />
-        public override string Description => "Get artwork from repo";
+        public override string Description => "Download studio artwork from configured repositories";
 
         /// <inheritdoc />
         public IEnumerable<PluginPageInfo> GetPages()
